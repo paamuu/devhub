@@ -1,0 +1,69 @@
+{
+  "name": "devhub",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local-first developer workbench",
+  "type": "module",
+  "main": "dist/electron/main.cjs",
+  "scripts": {
+    "build": "vite build && node scripts/build-electron.mjs && node scripts/build-native.mjs",
+    "pretest": "node scripts/build-electron.mjs && node scripts/build-native.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "node --disable-warning=ExperimentalWarning --test tests/*.test.ts",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "start": "npm run build && electron .",
+    "smoke": "node scripts/smoke.mjs",
+    "package:win": "npm run build && install-electron && electron-builder --win --dir --config.electronDist=node_modules/electron/dist",
+    "installer:win": "npm run build && install-electron && electron-builder --win nsis --x64 --config.electronDist=node_modules/electron/dist"
+  },
+  "build": {
+    "appId": "local.devhub.workbench",
+    "productName": "DevHub",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "dist/native/preview-host.exe",
+        "to": "preview-host.exe"
+      },
+      {
+        "from": "dist/electron/preview-launcher.cjs",
+        "to": "preview-launcher.cjs"
+      }
+    ],
+    "win": {
+      "signAndEditExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "deleteAppDataOnUninstall": false,
+      "createDesktopShortcut": false,
+      "runAfterFinish": false
+    }
+  },
+  "overrides": {
+    "minimatch": "11.0.9"
+  },
+  "devDependencies": {
+    "@types/cross-spawn": "6.0.6",
+    "@types/node": "26.6.6",
+    "cross-spawn": "7.0.6",
+    "electron": "45.3.4",
+    "electron-builder": "26.18.0",
+    "lit": "3.3.3",
+    "pino": "10.4.0",
+    "prettier": "3.10.1",
+    "simple-git": "4.1.0",
+    "typescript": "7.0.2",
+    "vite": "8.3.8",
+    "zod": "4.6.7"
+  }
+}
